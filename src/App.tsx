@@ -1,6 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {dataFactory, DataType, DataTypeLabels} from './utils/DataFactory';
-import {Avatar, Box, Container, Grid, makeStyles, MenuItem, Select, Typography} from '@material-ui/core';
+import {
+    Avatar,
+    Box,
+    Container,
+    FormControl,
+    Grid,
+    InputLabel,
+    makeStyles,
+    MenuItem,
+    Select,
+    Typography
+} from '@material-ui/core';
 import {ModelDashboard} from './components/ModelDashboard';
 import {MODEL_TYPE, modelFactory} from './utils/ModelFactory';
 import {Title} from './components/Title';
@@ -67,13 +78,19 @@ function App() {
                 (also known as a ConvNet or CNN).
             </Typography>
 
+            <Title>Data Set</Title>
+            <Box>
+                <FormControl variant="outlined">
+                    <Select value={dataType}
+                            onChange={(e) => setDataType(() => (e.target.value as DataType))}>
+                        {Object.keys(DataType)
+                            .filter(value => !isNaN(+value))
+                            .map((key) => <MenuItem value={key}>{DataTypeLabels[key]}</MenuItem>)}
+                    </Select>
+                </FormControl>
+            </Box>
             <Title>Data Loading</Title>
-            <Select value={dataType}
-                    onChange={(e) => setDataType(() => (e.target.value as DataType))}>
-                {Object.keys(DataType)
-                    .filter(value => !isNaN(+value))
-                    .map((key) => <MenuItem value={key}>{DataTypeLabels[key]}</MenuItem>)}
-            </Select>
+
             {isUploading ?
                 (
                     <Box className={classes.box}>
