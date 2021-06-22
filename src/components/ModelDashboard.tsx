@@ -78,6 +78,8 @@ export const ModelDashboard: FC<ModelDashboardProps> = ({dataFactory, model}) =>
 
     const [metric, setMetric] = useState<any[]>([]);
 
+    const [epochs, setEpochs] = useState(0);
+
 
     return (
         <Box>
@@ -89,7 +91,7 @@ export const ModelDashboard: FC<ModelDashboardProps> = ({dataFactory, model}) =>
                 onClick={() => {
                     setTrainProgress(() => true);
                     setStoppedState(() => false);
-                    setStartTime(new Date().getTime())
+                    setStartTime(new Date().getTime());
                     model.train({xs: dataFactory.xsTrain, ys: dataFactory.ysTrain}, {
                         onIteration: async (batch, totalNumBatches, logs) => {
                             // the first scalar is loss; the second scalar - accarucy
@@ -110,9 +112,12 @@ export const ModelDashboard: FC<ModelDashboardProps> = ({dataFactory, model}) =>
                                 acc: logs!.acc
                             }));
                         },
+                        onEpochEnd: () => {
+                            setEpochs((prev) => prev + 1);
+                        },
                         onTrainEnd: () => {
                             setStoppedState(() => true);
-                            setStopTime(new Date().getTime())
+                            setStopTime(new Date().getTime());
                         }
                     });
                 }}>
@@ -125,13 +130,16 @@ export const ModelDashboard: FC<ModelDashboardProps> = ({dataFactory, model}) =>
                 className={classes.button}
                 onClick={() => {
                     setStoppedState(() => true);
-                    setStopTime(new Date().getTime())
+                    setStopTime(new Date().getTime());
                     model.stop();
                 }}
             >
                 Stop
             </Button>
 
+            <Box>
+                <div>Trained {epochs} epochs</div>
+            </Box>
             {trainInProgress && (
                 <Box className={classes.trainingLog}>
                     <div>Training... ({(trainBatchCount / totalNumBatches * 100).toFixed(1)}% complete)</div>
